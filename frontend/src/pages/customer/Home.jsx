@@ -35,6 +35,7 @@ const Home = () => {
                 <Flame className="w-5 h-5 text-primary" />
                 <span className="text-sm font-medium">Now Delivering in Your Area!</span>
               </div>
+              <p className="text-primary font-semibold uppercase tracking-[0.2em] mb-3">Saffyra Kitchen</p>
               <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
                 Authentic <span className="text-primary">Biryani</span> & Bold{' '}
                 <span className="text-primary">Chinese</span> Flavors
