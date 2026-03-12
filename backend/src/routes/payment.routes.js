@@ -1,20 +1,32 @@
 import express from 'express';
-import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import { query } from '../db/config.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-// Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// Razorpay is disabled - using COD only
+// To enable Razorpay, add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET env variables
+let razorpay = null;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  const Razorpay = (await import('razorpay')).default;
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+}
 
 // Create Razorpay order
 router.post('/create-order', authenticate, async (req, res, next) => {
   try {
+    // Check if Razorpay is configured
+    if (!razorpay) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Online payment is not configured. Please use Cash on Delivery.' 
+      });
+    }
+
     const { orderNumber } = req.body;
 
     // Get order details
