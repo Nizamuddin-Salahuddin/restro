@@ -26,7 +26,7 @@ const Navbar = () => {
               <ChefHat className="w-6 h-6 text-white" />
             </div>
             <span className="text-xl font-bold">
-              Dum <span className="text-primary">&</span> Wok
+              Saffyra <span className="text-primary">Kitchen</span>
             </span>
           </Link>
 
