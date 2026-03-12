@@ -102,6 +102,7 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0';
 
 // Start server
 const startServer = async () => {
@@ -109,7 +110,7 @@ const startServer = async () => {
     // Test database connection
     await testConnection();
     
-    httpServer.listen(PORT, () => {
+    httpServer.listen(PORT, HOST, () => {
       console.log(`🍛 Dum & Wok Server running on port ${PORT}`);
       console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
