@@ -431,7 +431,7 @@ const OrderDetails = () => {
             </div>
 
             <div className="text-center mb-4 pb-4 border-b">
-              <h3 className="text-lg font-bold">Dum & Wok</h3>
+              <h3 className="text-lg font-bold">Saffyra Kitchen</h3>
               <p className="text-sm text-gray-500">Restaurant & Kitchen</p>
             </div>
 

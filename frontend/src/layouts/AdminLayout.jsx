@@ -64,7 +64,7 @@ const AdminLayout = () => {
           <div className="hidden lg:flex items-center space-x-2 p-6 border-b border-secondary-light">
             <ChefHat className="w-10 h-10 text-primary" />
             <div>
-              <h1 className="font-bold text-xl">Dum & Wok</h1>
+              <h1 className="font-bold text-xl">Saffyra Kitchen</h1>
               <p className="text-xs text-gray-400">Admin Panel</p>
             </div>
           </div>

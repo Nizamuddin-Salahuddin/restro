@@ -57,7 +57,7 @@ const Checkout = () => {
         key: keyId,
         amount: Math.round(totalAmount * 100),
         currency: 'INR',
-        name: 'Dum & Wok',
+  name: 'Saffyra Kitchen',
         description: `Order #${orderNumber}`,
         order_id: razorpayOrderId,
         handler: async function (response) {

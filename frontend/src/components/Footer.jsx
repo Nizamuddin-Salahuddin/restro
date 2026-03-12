@@ -72,7 +72,7 @@ const Footer = () => {
 
         {/* Bottom */}
         <div className="border-t border-secondary-light mt-8 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; {new Date().getFullYear()} Dum & Wok. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Saffyra Kitchen. All rights reserved.</p>
         </div>
       </div>
     </footer>
