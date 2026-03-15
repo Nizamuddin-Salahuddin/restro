@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Phone, MapPin, Instagram, Facebook, Twitter } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -9,7 +9,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-2xl font-bold mb-4">
-              Dum <span className="text-primary">&</span> Wok
+              Saffyra <span className="text-primary">Kitchen</span>
             </h3>
             <p className="text-gray-400 mb-4 max-w-md">
               Experience the perfect blend of traditional Dum Biryani and bold Chinese flavors, 
@@ -56,15 +56,11 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center space-x-3 text-gray-400">
                 <Phone className="w-5 h-5 text-primary" />
-                <span>+91 98765 43210</span>
-              </li>
-              <li className="flex items-center space-x-3 text-gray-400">
-                <Mail className="w-5 h-5 text-primary" />
-                <span>order@dumandwok.com</span>
+                <span>+91 86682 86129</span>
               </li>
               <li className="flex items-start space-x-3 text-gray-400">
                 <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span>123 Food Street, Koramangala, Bangalore - 560034</span>
+                <span>Opposite Fashion Collection, Tilak Maidan, Khamgaon, Dist. Buldhana - 444303</span>
               </li>
             </ul>
           </div>
