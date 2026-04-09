@@ -125,6 +125,19 @@ export const adminAPI = {
   getAvailableDeliveryBoys: () => api.get('/admin/delivery-boys/available'),
 };
 
+// Inventory API
+export const inventoryAPI = {
+  // Items
+  getItems: () => api.get('/inventory/items'),
+  updateItemQuantity: (id, data) => api.put(`/inventory/items/${id}`, data),
+  // Purchases
+  addPurchase: (data) => api.post('/inventory/purchases', data),
+  getPurchases: (params) => api.get('/inventory/purchases', { params }),
+  // Daily Log
+  getDailyLog: (params) => api.get('/inventory/daily-log', { params }),
+  updateDailyLog: (data) => api.post('/inventory/daily-log', data),
+};
+
 // Waiter API
 export const waiterAPI = {
   // Tables

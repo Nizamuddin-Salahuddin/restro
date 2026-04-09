@@ -19,6 +19,7 @@ import deliveryRoutes from './src/routes/delivery.routes.js';
 import adminRoutes from './src/routes/admin.routes.js';
 import waiterRoutes from './src/routes/waiter.routes.js';
 import kitchenRoutes from './src/routes/kitchen.routes.js';
+import inventoryRoutes from './src/routes/inventory.js';
 
 // Import socket handler
 import { initializeSocket } from './src/socket/socket.js';
@@ -82,6 +83,7 @@ app.use('/api/delivery', deliveryRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/waiter', waiterRoutes);
 app.use('/api/kitchen', kitchenRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 // Initialize Socket handlers
 initializeSocket(io);

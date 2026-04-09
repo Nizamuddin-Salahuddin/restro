@@ -7,7 +7,8 @@ import {
   LogOut,
   Menu,
   X,
-  ChefHat
+  ChefHat,
+  Warehouse
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
@@ -23,6 +24,7 @@ const AdminLayout = () => {
     { path: '/admin/menu', icon: UtensilsCrossed, label: 'Menu' },
     { path: '/admin/orders', icon: Package, label: 'Orders' },
     { path: '/admin/delivery', icon: Truck, label: 'Delivery Boys' },
+    { path: '/admin/inventory', icon: Warehouse, label: 'Inventory' },
   ];
 
   const isActive = (path, exact) => {

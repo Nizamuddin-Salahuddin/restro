@@ -26,6 +26,10 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminMenu from './pages/admin/MenuManagement';
 import AdminOrders from './pages/admin/OrderManagement';
 import AdminDelivery from './pages/admin/DeliveryManagement';
+import InventoryManagement from './pages/admin/InventoryManagement';
+import AddPurchase from './pages/admin/AddPurchase';
+import PurchaseHistory from './pages/admin/PurchaseHistory';
+import DailyStockLog from './pages/admin/DailyStockLog';
 
 // Delivery Pages
 import DeliveryDashboard from './pages/delivery/Dashboard';
@@ -113,6 +117,10 @@ function App() {
           <Route path="menu" element={<AdminMenu />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="delivery" element={<AdminDelivery />} />
+          <Route path="inventory" element={<InventoryManagement />} />
+          <Route path="inventory/purchase" element={<AddPurchase />} />
+          <Route path="inventory/history" element={<PurchaseHistory />} />
+          <Route path="inventory/daily" element={<DailyStockLog />} />
         </Route>
 
         {/* Delivery Routes */}
