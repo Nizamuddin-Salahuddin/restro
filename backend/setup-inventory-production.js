@@ -2,7 +2,17 @@
 // Run this to setup inventory tables on production
 
 import dotenv from 'dotenv';
-import pool from './src/db/config.js';
+import pg from 'pg';
+
+dotenv.config();
+
+const { Pool } = pg;
+
+// Create pool with proper SSL configuration for Railway
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+});
 
 dotenv.config();
 
