@@ -73,16 +73,19 @@ app.get('/health', (req, res) => {
 });
 
 // API Routes
+console.log('🔌 Registering API routes...');
 app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
-app.use('/api/payments', paymentRoutes);
+app.use('/api/payment', paymentRoutes);
 app.use('/api/delivery', deliveryRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/waiter', waiterRoutes);
 app.use('/api/kitchen', kitchenRoutes);
+console.log('🏪 Registering inventory routes at /api/inventory...');
 app.use('/api/inventory', inventoryRoutes);
+console.log('✅ All routes registered successfully');
 
 // Initialize Socket handlers
 initializeSocket(io);
