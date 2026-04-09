@@ -4,6 +4,41 @@ import { adminAuth } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
+// Test route without authentication
+router.get('/test', async (req, res) => {
+  try {
+    res.json({
+      success: true,
+      message: 'Inventory routes are working!',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Test failed'
+    });
+  }
+});
+
+// Test database connection without auth
+router.get('/test-db', async (req, res) => {
+  try {
+    const result = await query('SELECT COUNT(*) as count FROM inventory_items');
+    res.json({
+      success: true,
+      message: 'Database connection working!',
+      data: { itemCount: result.rows[0].count }
+    });
+  } catch (error) {
+    console.error('Test DB error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Database test failed',
+      error: error.message
+    });
+  }
+});
+
 // Get all inventory items with current stock
 router.get('/items', adminAuth, async (req, res) => {
   try {
