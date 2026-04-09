@@ -1,19 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, CreditCard, ChevronRight, Loader2, Banknote } from 'lucide-react';
+import { MapPin, CreditCard, Banknote } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
-import { orderAPI, paymentAPI } from '../../lib/api';
 import toast from 'react-hot-toast';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { items, summary, clearCart } = useCartStore();
+  const { items, summary } = useCartStore();
   
   const [address, setAddress] = useState(user?.address || '');
   const [specialInstructions, setSpecialInstructions] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cod'); // 'online' | 'cod'
 
   useEffect(() => {
@@ -28,99 +26,24 @@ const Checkout = () => {
       return;
     }
 
-    setIsProcessing(true);
-
-    try {
-      // Create order with payment method
-      const orderResponse = await orderAPI.createOrder({
-        deliveryAddress: address,
-        specialInstructions: specialInstructions || undefined,
-        paymentMethod,
-      });
-
-      const { orderNumber, totalAmount, paymentMethod: pm } = orderResponse.data.data;
-
-      // If COD, skip payment gateway
-      if (pm === 'cod') {
-        clearCart();
-        toast.success('Order placed successfully! Pay on delivery.');
-        navigate(`/orders/${orderNumber}`);
-        return;
-      }
-
-      // Create Razorpay order for online payment
-      const paymentResponse = await paymentAPI.createOrder(orderNumber);
-      const { razorpayOrderId, keyId } = paymentResponse.data.data;
-
-      // Open Razorpay checkout
-      const options = {
-        key: keyId,
-        amount: Math.round(totalAmount * 100),
-        currency: 'INR',
-  name: 'Saffyra Kitchen',
-        description: `Order #${orderNumber}`,
-        order_id: razorpayOrderId,
-        handler: async function (response) {
-          try {
-            // Verify payment
-            await paymentAPI.verifyPayment({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              orderNumber,
-            });
-
-            // Clear cart and redirect
-            clearCart();
-            toast.success('Order placed successfully!');
-            navigate(`/orders/${orderNumber}`);
-          } catch (error) {
-            console.error('Payment verification error:', error);
-            toast.error('Payment verification failed. Please contact support.');
-            setIsProcessing(false);
-          }
-        },
-        prefill: {
-          name: user?.name,
-          email: user?.email,
-          contact: user?.phone || '',
-        },
-        theme: {
-          color: '#FF6B35',
-        },
-        modal: {
-          ondismiss: function () {
-            setIsProcessing(false);
-            toast.error('Payment cancelled');
-          },
-        },
-      };
-
-      // Check if Razorpay script is loaded
-      if (!window.Razorpay) {
-        toast.error('Payment gateway not loaded. Please refresh and try again.');
-        setIsProcessing(false);
-        return;
-      }
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.on('payment.failed', function (response) {
-        console.error('Payment failed:', response.error);
-        toast.error(response.error.description || 'Payment failed. Please try again.');
-        setIsProcessing(false);
-      });
-      razorpay.open();
-    } catch (error) {
-      console.error('Order creation error:', error);
-      toast.error(error.response?.data?.message || 'Failed to create order');
-      setIsProcessing(false);
-    }
+    toast.error(
+      'Due to heavy rush on opening, we are currently not accepting any online order. Please come after some days to check the status.',
+      { duration: 6000 }
+    );
   };
 
   return (
     <div className="min-h-screen bg-accent py-6">
       <div className="max-w-4xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-secondary mb-6">Checkout</h1>
+
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
+          <p className="font-semibold text-amber-900">Online ordering is temporarily paused</p>
+          <p className="mt-1 text-sm text-amber-800">
+            Due to heavy rush on opening, we are currently not accepting any online order.
+            Please come after some days to check the status.
+          </p>
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main Content */}
@@ -285,15 +208,10 @@ const Checkout = () => {
 
               <button
                 onClick={handlePlaceOrder}
-                disabled={isProcessing || !address.trim()}
+                disabled={!address.trim()}
                 className="w-full mt-6 bg-primary text-white py-4 rounded-xl font-semibold hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed btn-press flex items-center justify-center gap-2"
               >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Processing...
-                  </>
-                ) : paymentMethod === 'cod' ? (
+                {paymentMethod === 'cod' ? (
                   <>
                     <Banknote className="w-5 h-5" />
                     Place Order (COD)

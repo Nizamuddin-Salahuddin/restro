@@ -136,16 +136,6 @@ const Login = () => {
             Register
           </Link>
         </p>
-
-        {/* Demo Accounts */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-500 mb-2 font-medium">Demo Accounts:</p>
-          <div className="text-xs text-gray-600 space-y-1">
-            <p>Admin: admin@dumandwok.com / admin123</p>
-            <p>Delivery: raju@dumandwok.com / delivery123</p>
-            <p>Customer: customer@test.com / customer123</p>
-          </div>
-        </div>
       </div>
     </div>
   );
