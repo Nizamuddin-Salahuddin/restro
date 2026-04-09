@@ -34,6 +34,7 @@ const httpServer = createServer(app);
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:4173',
+  'https://saffyra.vercel.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
@@ -60,9 +61,14 @@ app.use(cors({
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    return callback(null, true); // Allow all in development
+    // Log rejected origins for debugging
+    console.log('CORS rejected origin:', origin);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 app.use(morgan('dev'));
 app.use(express.json());
