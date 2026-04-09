@@ -68,3 +68,11 @@ export const optionalAuth = async (req, res, next) => {
     next();
   }
 };
+
+// Admin authentication middleware (authenticate + authorize admin role)
+export const adminAuth = async (req, res, next) => {
+  authenticate(req, res, (err) => {
+    if (err) return next(err);
+    authorize('admin')(req, res, next);
+  });
+};
