@@ -57,27 +57,11 @@ app.use(helmet({
   contentSecurityPolicy: false,
 }));
 app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc)
-    if (!origin) return callback(null, true);
-    
-    // Allow all Vercel deployments and development
-    if (origin && (
-      origin.includes('vercel.app') ||
-      origin.includes('localhost') ||
-      allowedOrigins.includes(origin)
-    )) {
-      return callback(null, true);
-    }
-    
-    // Log rejected origins for debugging
-    console.log('CORS rejected origin:', origin);
-    return callback(null, true); // Temporarily allow all origins for debugging
-  },
+  origin: ['https://saffyra.vercel.app', 'http://localhost:5173', 'http://localhost:4173'],
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
 }));
 app.use(morgan('dev'));
 app.use(express.json());
@@ -118,67 +102,26 @@ app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Route not found' });
 });
 
-const PORT = process.env.PORT || 5000;
-const HOST = '0.0.0.0';
-
 // Start server
 const startServer = async () => {
-  try {
-    console.log('🚀 Starting Dum & Wok Server...');
-    console.log('📊 Environment variables check:');
-    console.log('- PORT:', process.env.PORT || 5000);
-    console.log('- NODE_ENV:', process.env.NODE_ENV || 'development');
-    console.log('- DATABASE_URL exists:', !!process.env.DATABASE_URL);
-    console.log('- FRONTEND_URL:', process.env.FRONTEND_URL || 'not set');
+  const PORT = process.env.PORT || 5000;
+  const HOST = '0.0.0.0';
+  
+  console.log('🚀 Starting Dum & Wok Server...');
+  console.log('- PORT:', PORT);
+  console.log('- NODE_ENV:', process.env.NODE_ENV || 'development');
+  console.log('- DATABASE_URL exists:', !!process.env.DATABASE_URL);
+  
+  // Start server immediately without database dependency for Railway
+  httpServer.listen(PORT, HOST, () => {
+    console.log(`🍛 Dum & Wok Server running on port ${PORT}`);
+    console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
     
-    // Test database connection
-    console.log('🔍 Testing database connection...');
-    await testConnection();
-    console.log('✅ Database connection successful');
-    
-    // Auto-setup inventory tables in production if they don't exist
-    if (process.env.NODE_ENV === 'production') {
-      try {
-        const { pool } = await import('./src/db/config.js');
-        const result = await pool.query(`
-          SELECT table_name FROM information_schema.tables 
-          WHERE table_schema = 'public' AND table_name = 'inventory_items'
-        `);
-        
-        if (result.rows.length === 0) {
-          console.log('📦 Setting up inventory tables...');
-          await import('./setup-production.js');
-        }
-      } catch (setupError) {
-        console.warn('⚠️ Auto-setup failed, continuing with server start:', setupError.message);
-      }
-    }
-    
-    console.log('🌐 Starting HTTP server...');
-    httpServer.listen(PORT, HOST, () => {
-      console.log(`🍛 Dum & Wok Server running on port ${PORT}`);
-      console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🔗 Health check: http://localhost:${PORT}/health`);
-    });
-  } catch (error) {
-    console.error('❌ Failed to start server:', error);
-    console.error('Stack trace:', error.stack);
-    
-    // In production, try to start anyway after logging the error
-    if (process.env.NODE_ENV === 'production') {
-      console.log('⚠️ Attempting to start server despite errors...');
-      try {
-        httpServer.listen(PORT, HOST, () => {
-          console.log(`🍛 Dum & Wok Server running on port ${PORT} (fallback mode)`);
-        });
-      } catch (fallbackError) {
-        console.error('❌ Fallback start also failed:', fallbackError);
-        process.exit(1);
-      }
-    } else {
-      process.exit(1);
-    }
-  }
+    // Test database connection after server starts
+    testConnection()
+      .then(() => console.log('✅ Database connection successful'))
+      .catch(error => console.warn('⚠️ Database connection failed:', error.message));
+  });
 };
 
 startServer();
