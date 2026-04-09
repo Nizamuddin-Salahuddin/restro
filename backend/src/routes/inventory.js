@@ -1,18 +1,15 @@
 import express from 'express';
 import { query } from '../db/config.js';
-import { authenticate, authorize } from '../middleware/auth.middleware.js';
+import { adminAuth } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
-
-// Admin auth middleware
-const adminAuth = [authenticate, authorize('admin')];
 
 // Get all inventory items with current stock
 router.get('/items', adminAuth, async (req, res) => {
   try {
     const result = await query(`
       SELECT 
-        id, name, current_quantity, unit, 
+        id, name, current_stock, unit, min_threshold,
         created_at, updated_at
       FROM inventory_items 
       ORDER BY name ASC
@@ -35,9 +32,9 @@ router.get('/items', adminAuth, async (req, res) => {
 router.put('/items/:id', adminAuth, async (req, res) => {
   try {
     const { id } = req.params;
-    const { current_quantity } = req.body;
+    const { current_stock } = req.body;
 
-    if (current_quantity < 0) {
+    if (current_stock < 0) {
       return res.status(400).json({
         success: false,
         message: 'Quantity cannot be negative'
@@ -46,10 +43,10 @@ router.put('/items/:id', adminAuth, async (req, res) => {
 
     const result = await query(`
       UPDATE inventory_items 
-      SET current_quantity = $1, updated_at = CURRENT_TIMESTAMP
+      SET current_stock = $1, updated_at = CURRENT_TIMESTAMP
       WHERE id = $2
       RETURNING *
-    `, [current_quantity, id]);
+    `, [current_stock, id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({
@@ -110,7 +107,7 @@ router.post('/purchases', adminAuth, async (req, res) => {
     if (itemResult.rows.length === 0) {
       // Create new item
       const newItemResult = await query(`
-        INSERT INTO inventory_items (name, current_quantity, unit)
+        INSERT INTO inventory_items (name, current_stock, unit)
         VALUES ($1, $2, $3)
         RETURNING id
       `, [item_name, quantity, unit]);
@@ -120,7 +117,7 @@ router.post('/purchases', adminAuth, async (req, res) => {
       // Update existing item quantity
       await query(`
         UPDATE inventory_items 
-        SET current_quantity = current_quantity + $1,
+        SET current_stock = current_stock + $1,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = $2
       `, [quantity, itemId]);
@@ -356,7 +353,7 @@ router.post('/daily-log', adminAuth, async (req, res) => {
     // Update inventory current quantity
     await query(`
       UPDATE inventory_items 
-      SET current_quantity = $1, updated_at = CURRENT_TIMESTAMP
+      SET current_stock = $1, updated_at = CURRENT_TIMESTAMP
       WHERE id = $2
     `, [closing_stock, item_id]);
 

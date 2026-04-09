@@ -2,7 +2,7 @@
 // Run this to setup inventory tables on production
 
 import dotenv from 'dotenv';
-import { pool } from './src/db/config.js';
+import pool from './src/db/config.js';
 
 dotenv.config();
 
