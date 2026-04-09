@@ -10,7 +10,8 @@
     "migrate": "node src/db/migrate.js",
     "seed": "node src/db/seed.js",
     "migrate:dinein": "node src/db/migrate-dinein.js",
-    "seed:dinein": "node src/db/seed-dinein.js"
+    "seed:dinein": "node src/db/seed-dinein.js",
+    "setup:production": "node setup-production.js"
   },
   "keywords": ["restaurant", "food-ordering", "api"],
   "author": "",

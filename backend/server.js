@@ -136,6 +136,24 @@ const startServer = async () => {
     await testConnection();
     console.log('✅ Database connection successful');
     
+    // Auto-setup inventory tables in production if they don't exist
+    if (process.env.NODE_ENV === 'production') {
+      try {
+        const { pool } = await import('./src/db/config.js');
+        const result = await pool.query(`
+          SELECT table_name FROM information_schema.tables 
+          WHERE table_schema = 'public' AND table_name = 'inventory_items'
+        `);
+        
+        if (result.rows.length === 0) {
+          console.log('📦 Setting up inventory tables...');
+          await import('./setup-production.js');
+        }
+      } catch (setupError) {
+        console.warn('⚠️ Auto-setup failed, continuing with server start:', setupError.message);
+      }
+    }
+    
     console.log('🌐 Starting HTTP server...');
     httpServer.listen(PORT, HOST, () => {
       console.log(`🍛 Dum & Wok Server running on port ${PORT}`);
@@ -145,7 +163,21 @@ const startServer = async () => {
   } catch (error) {
     console.error('❌ Failed to start server:', error);
     console.error('Stack trace:', error.stack);
-    process.exit(1);
+    
+    // In production, try to start anyway after logging the error
+    if (process.env.NODE_ENV === 'production') {
+      console.log('⚠️ Attempting to start server despite errors...');
+      try {
+        httpServer.listen(PORT, HOST, () => {
+          console.log(`🍛 Dum & Wok Server running on port ${PORT} (fallback mode)`);
+        });
+      } catch (fallbackError) {
+        console.error('❌ Fallback start also failed:', fallbackError);
+        process.exit(1);
+      }
+    } else {
+      process.exit(1);
+    }
   }
 };
 
