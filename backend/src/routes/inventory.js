@@ -199,7 +199,7 @@ router.get('/items', async (req, res) => {
 });
 
 // Update inventory item quantity
-router.put('/items/:id', adminAuth, async (req, res) => {
+router.put('/items/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { current_stock } = req.body;
@@ -240,7 +240,7 @@ router.put('/items/:id', adminAuth, async (req, res) => {
 });
 
 // Add new purchase
-router.post('/purchases', adminAuth, async (req, res) => {
+router.post('/purchases', async (req, res) => {
   try {
     const {
       item_name,
@@ -322,7 +322,7 @@ router.post('/purchases', adminAuth, async (req, res) => {
 });
 
 // Get purchase history with filters
-router.get('/purchases', adminAuth, async (req, res) => {
+router.get('/purchases', async (req, res) => {
   try {
     const {
       item_name,
@@ -419,7 +419,7 @@ router.get('/purchases', adminAuth, async (req, res) => {
 });
 
 // Get daily stock log
-router.get('/daily-log', adminAuth, async (req, res) => {
+router.get('/daily-log', async (req, res) => {
   try {
     const { date } = req.query;
     const logDate = date || new Date().toISOString().split('T')[0];
@@ -453,7 +453,7 @@ router.get('/daily-log', adminAuth, async (req, res) => {
 });
 
 // Update daily stock log
-router.post('/daily-log', adminAuth, async (req, res) => {
+router.post('/daily-log', async (req, res) => {
   try {
     const { item_id, date, used_today } = req.body;
 
