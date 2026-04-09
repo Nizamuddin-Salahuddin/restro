@@ -1,8 +1,11 @@
 import express from 'express';
 import { query } from '../db/config.js';
-import { adminAuth } from '../middleware/auth.js';
+import { authenticate, authorize } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
+
+// Admin auth middleware
+const adminAuth = [authenticate, authorize('admin')];
 
 // Get all inventory items with current stock
 router.get('/items', adminAuth, async (req, res) => {
