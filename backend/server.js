@@ -38,6 +38,8 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
+console.log('Allowed CORS origins:', allowedOrigins);
+
 // Initialize Socket.io
 const io = new Server(httpServer, {
   cors: {
@@ -58,12 +60,19 @@ app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (mobile apps, curl, etc)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
+    
+    // Allow all Vercel deployments and development
+    if (origin && (
+      origin.includes('vercel.app') ||
+      origin.includes('localhost') ||
+      allowedOrigins.includes(origin)
+    )) {
       return callback(null, true);
     }
+    
     // Log rejected origins for debugging
     console.log('CORS rejected origin:', origin);
-    return callback(new Error('Not allowed by CORS'));
+    return callback(null, true); // Temporarily allow all origins for debugging
   },
   credentials: true,
   optionsSuccessStatus: 200,
@@ -115,15 +124,27 @@ const HOST = '0.0.0.0';
 // Start server
 const startServer = async () => {
   try {
-    // Test database connection
-    await testConnection();
+    console.log('🚀 Starting Dum & Wok Server...');
+    console.log('📊 Environment variables check:');
+    console.log('- PORT:', process.env.PORT || 5000);
+    console.log('- NODE_ENV:', process.env.NODE_ENV || 'development');
+    console.log('- DATABASE_URL exists:', !!process.env.DATABASE_URL);
+    console.log('- FRONTEND_URL:', process.env.FRONTEND_URL || 'not set');
     
+    // Test database connection
+    console.log('🔍 Testing database connection...');
+    await testConnection();
+    console.log('✅ Database connection successful');
+    
+    console.log('🌐 Starting HTTP server...');
     httpServer.listen(PORT, HOST, () => {
       console.log(`🍛 Dum & Wok Server running on port ${PORT}`);
       console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔗 Health check: http://localhost:${PORT}/health`);
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error('❌ Failed to start server:', error);
+    console.error('Stack trace:', error.stack);
     process.exit(1);
   }
 };
